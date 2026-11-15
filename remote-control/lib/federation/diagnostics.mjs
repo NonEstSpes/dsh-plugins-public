@@ -44,6 +44,14 @@ const DIAGNOSTICS = new Map([
   ['session-source/grant-changed', GRANT],
   ['source-unavailable', UNAVAILABLE],
   ['session-source/source-unavailable', UNAVAILABLE],
+  ['OUTBOX_CAPACITY', {
+    endpointCode: UNAVAILABLE.endpointCode, reason: 'local-outbox-full',
+    text: 'The local transport outbox is full.',
+  }],
+  ['INBOX_CAPACITY', {
+    endpointCode: UNAVAILABLE.endpointCode, reason: 'local-inbox-full',
+    text: 'The local transport inbox is full.',
+  }],
   ['request-timeout', {
     endpointCode: UNAVAILABLE.endpointCode, reason: 'request-timeout',
     text: 'The remote read request exceeded its deadline.',

@@ -1,5 +1,13 @@
 # Relay transport
 
+## Bounded receipts
+
+Bridge 0.1.6 uses the existing 8192-record budget for the total outgoing store instead of the legacy 512-record ceiling. At most 256 outgoing messages may be pending, independently of compact completed receipts. Incoming records remain bounded to 8192 with at most 256 pending handlers. Both replay retention and authenticated terminal receipts remain intact; exhaustion refuses new work instead of evicting unexpired records. This is finite headroom, not an unlimited or exactly-once transport promise. The application mutation journal and remote replay checks still own their respective guarantees.
+
+Read [upgrade and downgrade limits](UPGRADE.md) before replacing either endpoint. The bounds apply separately on Controller and Worker. Never clear state to recover capacity.
+
+## Carrier
+
 Omitted `relayTransport` or `"https"` retains the existing HTTPS carrier and opens no socket. A version-two pair selecting `"auto"` must explicitly provide positive `requestTimeoutMs` and `relaySocketConnectTimeoutMs`, with the connection deadline no greater than the request deadline. A connection timeout is invalid in HTTPS-only mode.
 
 The private [Node carrier](lib/relay-socket.mjs) uses same-origin `v1/socket`: WSS for HTTPS, or WS only for an explicitly allowed exact loopback HTTP authority. The existing bearer header authenticates before upgrade; the subprotocol is `dsh-relay-rpc-v1`. Redirects, URL credentials/query tokens and TLS-verification bypass are forbidden. Old-relay 404/426 support refusal is cached for the carrier lifetime; 401/403 never falls back. Temporary pre-open failures use the explicit connection deadline as their retry delay.

@@ -4,7 +4,7 @@
 
 ## Исходники и готовые поставки
 
-- Корневой пакет `@local/dsh-remote-control` сохраняет версию **0.1.5** и legacy-интерфейс v1. Его установка из этого каталога **не устанавливает** весь новый native Controller/Worker.
+- Корневой пакет `@local/dsh-remote-control` имеет версию **0.1.6** и legacy-интерфейс v1. Его установка из этого каталога **не устанавливает** весь новый native Controller/Worker.
 - Native-архитектура описана в [FEDERATION-V2.md](FEDERATION-V2.md), регистрация проектов — в [PROJECT-REGISTRATION-V1.md](PROJECT-REGISTRATION-V1.md), транспорт — в [TRANSPORT.md](TRANSPORT.md).
 - Совместимый runtime — **DSH 0.2.2-rc.1**; native Worker требует Node.js **24.9+**. Проверяйте точные версии и зависимости в манифесте выбранного архива, не выдавайте version exemptions.
 - Готовые Controller/Bridge/Worker-архивы распространяются отдельно через [Releases](https://github.com/NonEstSpes/dsh-plugins-public/releases). Наличие исходников не означает, что нужный архив уже опубликован или установлен. Проверяйте состав и контрольные суммы конкретного релиза.

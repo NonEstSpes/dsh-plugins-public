@@ -15,9 +15,14 @@ export async function createHostProvider({ runtime, pair, RemoteError }) {
   const ErrorClass = RemoteError ?? (await import('@deepseek-ai/dsh-typert-protocol')).RemoteError
   const codec = createWireCodec({ machineKey: pair.machineKey })
   const verifiedMutations = Object.freeze({ durableJournal: 'verified', firstRouteCapture: 'verified' })
+  // Only error identities created here authorize reuse; remote classes and text do not.
+  const sanitizedErrors = new WeakSet()
   const error = (original, stage) => {
+    if (sanitizedErrors.has(original)) return original
     const diagnostic = sourceDiagnostic(original, stage)
-    return new ErrorClass(diagnostic.endpointCode, diagnostic.message, {})
+    const safe = new ErrorClass(diagnostic.endpointCode, diagnostic.message, {})
+    sanitizedErrors.add(safe)
+    return safe
   }
   const call = async (op, args, signal, id) => {
     try { return await runtime.call(pair.machineKey, op, args, signal, id) } catch (failure) {

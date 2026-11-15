@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-remote-control",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "description": "Paired native DSH sessions over an encrypted outbound relay",
   "type": "module",

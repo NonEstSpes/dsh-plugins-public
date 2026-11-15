@@ -6,10 +6,22 @@ import { builtinModules, createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const here = path.dirname(fileURLToPath(import.meta.url)), root = path.dirname(here), version = '0.1.5'
+const here = path.dirname(fileURLToPath(import.meta.url)), root = path.dirname(here)
+const options = new Map(), argumentsList = process.argv.slice(2)
+for (let index = 0; index < argumentsList.length; index++) {
+  const key = argumentsList[index]
+  if (!['--version', '--base', '--sdk-source-root', '--verify'].includes(key) || options.has(key)) throw new Error('Unknown or duplicate bridge release option')
+  if (key === '--verify') { options.set(key, true); continue }
+  const value = argumentsList[++index]
+  if (!value || value.startsWith('--')) throw new Error('Bridge release option needs an explicit value')
+  options.set(key, value)
+}
+const version = options.get('--version') ?? '0.1.6'
+if (!/^0\.1\.\d+$/.test(version)) throw new Error('Unexpected bridge release version')
 const output = path.join(here, `bundle-release-${version}`), scratch = path.join(root, '.build', `bridge-release-${randomUUID()}`), stage = path.join(scratch, 'payload')
-const base = path.join(here, 'bundle-stage2-0.1.4'), reportName = 'bridge-release-report.json'
-const ts = createRequire(path.resolve(root, '../dsh-remote-core/package.json'))('typescript')
+const base = path.resolve(options.get('--base') ?? path.join(here, 'bundle-release-0.1.5')), reportName = 'bridge-release-report.json'
+const sdkSourceRoot = path.resolve(options.get('--sdk-source-root') ?? path.join(root, '../dsh-remote-core'))
+const ts = createRequire(path.join(sdkSourceRoot, 'package.json'))('typescript')
 const hash = value => createHash('sha256').update(value).digest('hex'), json = value => JSON.stringify(value, null, 2) + '\n'
 const exists = async filename => { try { await lstat(filename); return true } catch (error) { if (error.code === 'ENOENT') return false; throw error } }
 async function snapshot(directory, prefix = '') {
@@ -70,6 +82,10 @@ if (process.argv.includes('--verify')) {
 } else {
   if (path.dirname(output) !== here || await exists(output)) throw new Error('Refusing an existing bridge publication')
   const baseFiles = await snapshot(base), sourceFiles = await snapshot(path.join(root, 'lib'))
+  const baseManifest = JSON.parse(await readFile(path.join(base, 'package.json'), 'utf8'))
+  const baseReport = JSON.parse(await readFile(path.join(base, reportName), 'utf8')), basePayload = { ...baseFiles }
+  delete basePayload[reportName]
+  if (baseManifest.name !== '@dsh-remote/control-bridge' || baseReport.treeHashExcludingThisReport !== treeHash(basePayload)) throw new Error('Immutable bridge base receipt does not match its payload')
   const docs = ['FEDERATION-V2.md', 'TRANSPORT.md', 'UPGRADE.md'], inputs = {}
   for (const name of ['index.js', 'package.json', 'icon.svg', ...docs]) inputs[name] = hash(await readFile(path.join(root, name)))
   const generatorHash = hash(await readFile(path.join(here, 'build.mjs')))
@@ -86,9 +102,9 @@ if (process.argv.includes('--verify')) {
   await writeFile(path.join(stage, 'locale/en.json'), json({ meta: { title: 'Native remote session bridge', description: 'Encrypted Controller–Worker pairing, native live state, projects, file/image receipts and outbound WSS with HTTPS fallback.' } }))
   await writeFile(path.join(stage, 'locale/ru.json'), json({ meta: { title: 'Шлюз удалённых native-сессий', description: 'Шифрованная связь Controller–Worker, native live-состояние, проекты, файлы и изображения, исходящий WSS с HTTPS fallback.' } }))
   for (const name of docs) await writeFile(path.join(stage, name), await readFile(path.join(root, name)))
-  await writeFile(path.join(stage, 'README.md'), '# Native remote session bridge\n\nHost-only Controller/Worker pairing with exact native SDK ownership, live history and statistics, machine-scoped project registration, native file/image receipts and verified attachment reads. This package has no browser factory and does not activate a Worker. The separate Controller Client bundle owns presentation.\n\nSelect an explicit absolute role-local settingsFile; no private path or credential is inferred or included. Controller source registrations are effect-owned and close before replacement. The Worker helper is the separately installed exact0.1.7 SDK provider; all serving Host SDK identities remain shared.\n\nOutbound relayTransport defaults to the existing HTTPS carrier. Explicit auto plus requestTimeoutMs and relaySocketConnectTimeoutMs negotiates same-origin WSS and falls back to HTTPS only before a socket request is published. Published durable envelopes retain their original identities. Terminal endpoint state v2 uses authenticated compact receipts; read [UPGRADE](UPGRADE.md) before downgrading. Native Session data formats are unchanged.\n\nUploads require an already live native Agent; cold activation and draft attachment downloads are not supported. Physical Worker/WAN/TLS/power-loss acceptance is not established by local loopback checks. See [TRANSPORT](TRANSPORT.md) and [federation notes](FEDERATION-V2.md).\n')
+  await writeFile(path.join(stage, 'README.md'), '# Native remote session bridge\n\nHost-only Controller/Worker pairing with exact native SDK ownership, live history and statistics, machine-scoped project registration, native file/image receipts and verified attachment reads. This package has no browser factory and does not activate a Worker. The separate Controller Client bundle owns presentation.\n\nSelect an explicit absolute role-local settingsFile; no private path or credential is inferred or included. Controller source registrations are effect-owned and close before replacement. The Worker helper is the separately installed exact0.1.7 SDK provider; all serving Host SDK identities remain shared.\n\nOutbound relayTransport defaults to the existing HTTPS carrier. Explicit auto plus requestTimeoutMs and relaySocketConnectTimeoutMs negotiates same-origin WSS and falls back to HTTPS only before a socket request is published. Published durable envelopes retain their original identities. Terminal endpoint state v2 uses authenticated compact receipts; read [UPGRADE](UPGRADE.md) before downgrading. Native Session data formats are unchanged.\n\nBridge 0.1.6 admits 8192 total outgoing records with an independent maximum of 256 pending messages. The old 512 ceiling no longer counts all compact receipts as a saturated delivery queue. Retention and authenticated receipts remain intact; this is bounded headroom, not unlimited throughput. Earlier bridges reject a revision-2 outbox above 512 records: keep the newer bridge or use deliberately reviewed compatible backup recovery, never trim replay records. Both endpoints need their own upgrade. Exact static local-outbox-full/local-inbox-full diagnostics preserve already sanitized reasons without trusting remote error text.\n\nUploads require an already live native Agent; cold activation and draft attachment downloads are not supported. Physical Worker/WAN/TLS/power-loss acceptance is not established by local loopback checks. See [TRANSPORT](TRANSPORT.md) and [federation notes](FEDERATION-V2.md).\n')
   const payload = await snapshot(stage)
-  await writeFile(path.join(stage, reportName), json({ packageVersion: version, builtAt: new Date().toISOString(), base: 'bundle-stage2-0.1.4',
+  await writeFile(path.join(stage, reportName), json({ packageVersion: version, builtAt: new Date().toISOString(), base: path.basename(base),
     baseTreeHash: treeHash(baseFiles), sourceLibraryHashes: sourceFiles, sourceInputs: inputs, generatorHash,
     runtimeLibraryFiles: Object.keys(sourceFiles).filter(name => name.endsWith('.mjs')), sourceFence: true,
     sdkHelperVersion: '0.1.7', endpointStateVersion: 2, webSocketDependency: '8.21.3', installed: false, workerActivated: false,

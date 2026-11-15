@@ -4,7 +4,7 @@
 
 | Модуль | Пакет | Версия |
 | --- | --- | --- |
-| [Remote control](remote-control/README.md) | `@local/dsh-remote-control` | 0.1.5 |
+| [Remote control](remote-control/README.md) | `@local/dsh-remote-control` | 0.1.6 |
 | [Interactive replies](interactive-replies/README.md) | `@local/interactive-replies` | 1.0.3 |
 | [Finance](finance-plugin/README.md) | `@local/dsh-finance` | 0.1.14 |
 | [Codex usage](codex-usage/README.md) | `@local/codex-usage` | 1.1.0 |

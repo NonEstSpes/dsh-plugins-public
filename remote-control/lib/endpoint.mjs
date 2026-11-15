@@ -13,7 +13,6 @@ const MAX_BODY = 100 * 1024;
 const MAX_PLAINTEXT = 59 * 1024;
 const MAX_RECORDS = 8192;
 const MAX_PENDING = 256;
-const MAX_OUTBOX = 512;
 const MAX_QUARANTINE = 256;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -121,7 +120,8 @@ function validateState(state, binding, verifyReceipt) {
   const corrupt = () => { throw fault('STATE_CORRUPT'); };
   if (!exactKeys(state, ['version', 'binding', 'outbox', 'inbox', 'acks', 'quarantine']) || ![1, 2].includes(state.version) ||
       canonical(state.binding) !== canonical(binding)) throw fault('STATE_BINDING_MISMATCH');
-  if (!Array.isArray(state.outbox) || state.outbox.length > MAX_OUTBOX || !Array.isArray(state.inbox) || state.inbox.length > MAX_RECORDS ||
+  // Legacy v1 writers could retain at most 512 ciphertexts; only v2 receipts use the larger budget.
+  if (!Array.isArray(state.outbox) || state.outbox.length > (state.version === 1 ? 512 : MAX_RECORDS) || !Array.isArray(state.inbox) || state.inbox.length > MAX_RECORDS ||
       !Array.isArray(state.acks) || state.acks.length > MAX_RECORDS || !Array.isArray(state.quarantine) || state.quarantine.length > MAX_QUARANTINE) corrupt();
   for (const list of [state.outbox, state.inbox]) {
     const ids = new Set();
@@ -565,7 +565,7 @@ export async function openEndpoint(settings, { onMessage, onError = () => {} } =
         if (existing.digest !== digest || (suppliedExpiry !== undefined && suppliedExpiry !== existing.expiresAt)) throw fault('ID_COLLISION');
         return;
       }
-      if (state.outbox.length >= MAX_OUTBOX || state.outbox.filter(item => item.state === 'pending').length >= MAX_PENDING) throw fault('OUTBOX_CAPACITY');
+      if (state.outbox.length >= MAX_RECORDS || state.outbox.filter(item => item.state === 'pending').length >= MAX_PENDING) throw fault('OUTBOX_CAPACITY');
       state.outbox.push({ id: packetId, digest, ciphertext, createdAt: now, expiresAt: expiry, retainUntil: now + DAY, attempts: 0, nextAt: 0, state: 'pending' });
     });
     notify();

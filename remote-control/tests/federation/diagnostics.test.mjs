@@ -19,6 +19,8 @@ const CASES = [
   ['session-source/grant-changed', 'session-source/grant-changed', 'grant-changed'],
   ['source-unavailable', 'session-source/source-unavailable', 'source-unavailable'],
   ['session-source/source-unavailable', 'session-source/source-unavailable', 'source-unavailable'],
+  ['OUTBOX_CAPACITY', 'session-source/source-unavailable', 'local-outbox-full'],
+  ['INBOX_CAPACITY', 'session-source/source-unavailable', 'local-inbox-full'],
   ['request-timeout', 'session-source/source-unavailable', 'request-timeout'],
   ['not-granted', 'session-source/source-unavailable', 'not-granted'],
   ['page-too-large', 'session-source/source-unavailable', 'page-too-large'],
@@ -52,6 +54,26 @@ test('read deadline, denial, size, malformed protocol, stale authority and unava
   assert.match(messages[3], /supported protocol/)
 })
 
+test('capacity diagnostics name only the local transport queue, never remote payloads', () => {
+  for (const [code, queue] of [['OUTBOX_CAPACITY', 'outbox'], ['INBOX_CAPACITY', 'inbox']]) {
+    const inspected = [], error = { code }
+    for (const field of ['message', 'details', 'cause', 'path', 'key']) {
+      Object.defineProperty(error, field, { get() { inspected.push(field); throw new Error(SECRET) } })
+    }
+    assert.deepEqual(sourceDiagnostic(error, 'session.bind.details'), {
+      endpointCode: 'session-source/source-unavailable',
+      message: `session.bind.details: local-${queue}-full. The local transport ${queue} is full.`,
+    })
+    assert.deepEqual(inspected, [])
+  }
+  const fallback = sourceDiagnostic(undefined, 'session.bind')
+  for (const error of [new Error('OUTBOX_CAPACITY'), { message: 'OUTBOX_CAPACITY' },
+    { code: 'outbox_capacity' }, { code: 'OUTBOX_CAPACITY ' }, { code: 'INBOX_CAPACITY\n' },
+    { code: 'source-unavailable', details: { code: 'OUTBOX_CAPACITY' } }]) {
+    assert.deepEqual(sourceDiagnostic(error, 'session.bind'), fallback)
+  }
+})
+
 test('unknown mutation outcomes keep the session prefix despite cancellation or timeout details', () => {
   for (const stage of ['session.create', 'session.prompt', 'session.cancel', 'model.select']) {
     for (const code of ['outcome-unknown', 'session/outcome-unknown']) {
@@ -75,7 +97,7 @@ test('selection conflicts keep their lock before a misleading cancellation name'
 })
 
 test('AbortError is cancellation, not an invented source outage', () => {
-  for (const code of [undefined, 'ABORT_ERR', 'source-unavailable', 'request-timeout', SECRET]) {
+  for (const code of [undefined, 'ABORT_ERR', 'source-unavailable', 'request-timeout', 'OUTBOX_CAPACITY', 'INBOX_CAPACITY', SECRET]) {
     const result = sourceDiagnostic({ name: 'AbortError', code, message: SECRET }, 'session.read')
     assert.equal(result.endpointCode, 'session-source/source-unavailable')
     assert.equal(result.message, 'session.read: cancelled. The request was cancelled.')

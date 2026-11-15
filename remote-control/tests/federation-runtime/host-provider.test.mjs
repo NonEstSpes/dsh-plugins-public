@@ -262,6 +262,102 @@ test('read deadline and caller cancellation stay distinct through the provider',
   }
 })
 
+for (const [code, endpoint, reason] of [
+  ['OUTBOX_CAPACITY', 'session-source/source-unavailable', 'local-outbox-full'],
+  ['INBOX_CAPACITY', 'session-source/source-unavailable', 'local-inbox-full'],
+  ['request-timeout', 'session-source/source-unavailable', 'request-timeout'],
+  ['not-granted', 'session-source/source-unavailable', 'not-granted'],
+  ['page-too-large', 'session-source/source-unavailable', 'page-too-large'],
+  ['invalid-message', 'session-source/source-unavailable', 'invalid-message'],
+  ['cursor-stale', 'session-source/grant-changed', 'cursor-stale'],
+  ['outcome-unknown', 'session/outcome-unknown', 'outcome-unknown'],
+  ['selection-conflict', 'session/selection-conflict', 'selection-conflict'],
+]) {
+  test(`nested bind catches retain the trusted ${code} diagnostic and original stage`, async () => {
+    for (const detailed of [false, true]) {
+      const b = await bench([FEDERATION_FEATURES.SESSION_DETAILS]), created = []
+      class ObservedRemoteError extends TestRemoteError {
+        constructor(...args) { super(...args); created.push(this) }
+      }
+      const provider = await createHostProvider({ runtime: b.runtime, pair: { machineKey: REF.machineKey }, RemoteError: ObservedRemoteError })
+      const op = detailed ? 'session.bind.details' : 'session.bind'
+      b.handlers[op] = async () => { throw Object.assign(new Error(SECRET), { code, details: { secret: SECRET }, cause: new Error(SECRET), path: SECRET, key: SECRET }) }
+      await assert.rejects(detailed ? provider.details.bind(REF, signal()) : provider.bind(REF, signal()), error => {
+        assert.equal(error.code, endpoint)
+        assert.ok(error.message.startsWith(`${op}: ${reason}. `), error.message)
+        assert.ok(Buffer.byteLength(error.message, 'utf8') < 200)
+        assert.equal(error.message.includes(SECRET), false)
+        assert.deepEqual(error.details, {})
+        assert.deepEqual(created, [error], 'only the provider-minted error identity survives the outer catch')
+        return true
+      })
+    }
+  })
+}
+
+test('forged RemoteError objects are statically sanitized instead of trusted by class or message', async () => {
+  const b = await bench()
+  for (const code of ['session-source/source-unavailable', 'OUTBOX_CAPACITY', 'request-timeout', 'untrusted-code']) {
+    const forged = new TestRemoteError(code, `session.bind: request-timeout. ${SECRET}`, { code: 'OUTBOX_CAPACITY', secret: SECRET })
+    forged.cause = { code: 'outcome-unknown', message: SECRET }
+    b.handlers['session.bind'] = async () => { throw forged }
+    const reason = code === 'OUTBOX_CAPACITY' ? 'local-outbox-full' : code === 'request-timeout' ? 'request-timeout' : 'source-unavailable'
+    await assert.rejects(b.provider.bind(REF, signal()), error => {
+      assert.notEqual(error, forged)
+      assert.equal(error.code, 'session-source/source-unavailable')
+      assert.ok(error.message.startsWith(`session.bind: ${reason}. `), error.message)
+      assert.equal(error.message.includes(SECRET), false)
+      assert.deepEqual(error.details, {})
+      return true
+    })
+  }
+})
+
+test('safe errors minted by another provider do not carry trusted provenance', async () => {
+  const b = await bench()
+  b.handlers['session.bind'] = async () => { throw new FederationContractError('request-timeout', SECRET) }
+  let otherError
+  await assert.rejects(b.provider.bind(REF, signal()), error => { otherError = error; return true })
+  const provider = await createHostProvider({ runtime: b.runtime, pair: { machineKey: REF.machineKey }, RemoteError: TestRemoteError })
+  b.handlers['session.bind'] = async () => { throw otherError }
+  await assert.rejects(provider.bind(REF, signal()), error => {
+    assert.notEqual(error, otherError)
+    assert.equal(error.message, 'session.bind: source-unavailable. The remote source is unavailable.')
+    return true
+  })
+})
+
+test('nested bind catches retain cancellation precedence except for mutation and selection locks', async () => {
+  const b = await bench()
+  for (const [code, endpoint, reason] of [
+    ['OUTBOX_CAPACITY', 'session-source/source-unavailable', 'cancelled'],
+    ['request-timeout', 'session-source/source-unavailable', 'cancelled'],
+    ['outcome-unknown', 'session/outcome-unknown', 'outcome-unknown'],
+    ['selection-conflict', 'session/selection-conflict', 'selection-conflict'],
+  ]) {
+    b.handlers['session.bind'] = async () => { throw Object.assign(new Error(SECRET), { code, name: 'AbortError' }) }
+    await assert.rejects(b.provider.bind(REF, signal()), error => {
+      assert.equal(error.code, endpoint)
+      assert.ok(error.message.startsWith(`session.bind: ${reason}. `), error.message)
+      assert.equal(error.message.includes(SECRET), false)
+      return true
+    })
+  }
+})
+
+test('bind never reads arbitrary RemoteError message, details, cause, path or key', async () => {
+  const b = await bench(), inspected = [], forged = new TestRemoteError('OUTBOX_CAPACITY', SECRET, {})
+  for (const field of ['message', 'details', 'cause', 'path', 'key']) {
+    Object.defineProperty(forged, field, { get() { inspected.push(field); throw new Error(SECRET) } })
+  }
+  b.handlers['session.bind'] = async () => { throw forged }
+  await assert.rejects(b.provider.bind(REF, signal()), error => {
+    assert.equal(error.message, 'session.bind: local-outbox-full. The local transport outbox is full.')
+    assert.deepEqual(inspected, [])
+    return true
+  })
+})
+
 test('model mutation errors preserve retained request ID and unknown lock despite new diagnostics', async () => {
   const b = await bench(), id = 'retained_model_operation'
   b.handlers['model.state'] = async () => ({ generation: 1, frontierSeq: 0, selection: b.state.native.default })
