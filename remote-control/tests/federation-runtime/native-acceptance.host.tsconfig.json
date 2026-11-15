@@ -1,0 +1,67 @@
+{
+  // A Host-only check unit. Build referenced SDK artifacts before checking this program.
+  // Runtime Vite/source aliases and native createRequire ownership stay in native-joint.config.mjs.
+  "extends": "../../../dsh-remote-core/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rewriteRelativeImportExtensions": false,
+    "rootDir": "../../..",
+    "tsBuildInfoFile": "./.typecheck/native-acceptance.host.tsbuildinfo",
+    // Keep automatic globals bounded while allowing declaration lookup in the maintained Core toolchain.
+    "types": ["node"],
+    "typeRoots": [
+      "../../../dsh-remote-core/node_modules/@types",
+      "../../../dsh-remote-core/node_modules"
+    ]
+  },
+  "files": [
+    "native-joint.host.spec.ts",
+    "native-worker-owner.host.spec.ts",
+    "native-catalog-composition.host.spec.ts",
+    "live-history.native.host.spec.ts",
+    "native-live-owner.host.spec.ts",
+    "native-follow-history.host.spec.ts",
+    "native-live-composition.host.spec.ts",
+    "native-project-owner.host.spec.ts",
+    "native-file-transfer.host.spec.ts",
+    "native-image-transfer.host.spec.ts",
+    "source-transfer-benchmark.host.spec.ts",
+    "fixtures/native-files-worker.host.ts",
+    "../../../dsh-remote-core/packages/api/session-controller/tests/source-follow.host.spec.ts",
+    "../../../dsh-remote-core/packages/api/session-controller/tests/source-projects.host.spec.ts",
+    "../../../dsh-remote-core/packages/api/session-source-controller/tests/controller.host.spec.ts",
+    "../../../dsh-remote-core/packages/api/session-source-controller/tests/details-history.host.spec.ts",
+    "../../../dsh-remote-core/packages/api/session-source-controller/tests/live-history.host.spec.ts",
+    "../../../dsh-remote-core/packages/api/session-source-controller/tests/fixture.ts",
+    "../../../dsh-remote-core/packages/api/session-controller/tests/source-preparation-fixture.host.ts",
+    "../../../dsh-remote-core/packages/api/session-controller/tests/test-remote.ts",
+    "../../../dsh-remote-core/packages/storage/storage-domain/tests/helpers/memory-backend.ts"
+  ],
+  "references": [
+    { "path": "../../../dsh-remote-core/vendor/cordis" },
+    { "path": "../../../dsh-remote-core/vendor/loader" },
+    { "path": "../../../dsh-remote-core/vendor/include" },
+    { "path": "../../../dsh-remote-core/packages/util/brand" },
+    { "path": "../../../dsh-remote-core/packages/util/values" },
+    { "path": "../../../dsh-remote-core/packages/core/agent" },
+    { "path": "../../../dsh-remote-core/packages/core/session" },
+    { "path": "../../../dsh-remote-core/packages/llm/llm" },
+    { "path": "../../../dsh-remote-core/packages/llm/token-meter" },
+    { "path": "../../../dsh-remote-core/packages/session/session-persistence" },
+    { "path": "../../../dsh-remote-core/packages/session/session-persistence-jsonl" },
+    { "path": "../../../dsh-remote-core/packages/session/session-projection" },
+    { "path": "../../../dsh-remote-core/packages/session/session-stats" },
+    { "path": "../../../dsh-remote-core/packages/session-query/session-query" },
+    { "path": "../../../dsh-remote-core/packages/storage/storage" },
+    { "path": "../../../dsh-remote-core/packages/storage/storage-domain" },
+    { "path": "../../../dsh-remote-core/packages/workspace/workspace" },
+    { "path": "../../../dsh-remote-core/packages/attachment/attachment" },
+    { "path": "../../../dsh-remote-core/packages/fs/fs-local" },
+    { "path": "../../../dsh-remote-core/packages/sandbox/sandbox-policy" },
+    { "path": "../../../dsh-remote-core/packages/test-support/agent-loop-testkit" },
+    { "path": "../../../dsh-remote-core/packages/typert/protocol" },
+    { "path": "../../../dsh-remote-core/packages/api/session-controller/tsconfig.host.json" },
+    { "path": "../../../dsh-remote-core/packages/api/session-source-controller/tsconfig.host.json" },
+    { "path": "../../../dsh-remote-core/packages/api/remote-access/tsconfig.host.json" }
+  ]
+}

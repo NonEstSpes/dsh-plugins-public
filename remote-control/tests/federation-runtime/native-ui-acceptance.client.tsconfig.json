@@ -1,0 +1,32 @@
+{
+  "extends": "./native-acceptance.client.tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "checkJs": false,
+    "tsBuildInfoFile": "./.typecheck/native-ui-acceptance.client.tsbuildinfo"
+  },
+  "files": [
+    "./fixtures/project-ui-augmentations.client.d.ts",
+    "../../../dsh-remote-core/packages/client/ui-tool/tests/foreign-tool-metadata.client.spec.tsx",
+    "../../../dsh-remote-core/packages/client/ui-tool/tests/tool-call-tree.client.spec.tsx",
+    "../../../dsh-remote-core/packages/client/ui-tool/tests/tool-fixtures.client.ts",
+    "../../../dsh-remote-core/packages/api/session-controller/tests/source-project-registration.client.spec.ts",
+    "../../../dsh-remote-core/packages/client/ui-workspace/tests/project-registration.client.spec.tsx",
+    "../../../dsh-remote-core/packages/client/ui-workspace/tests/workspace-browser.client.spec.tsx"
+  ],
+  "references": [
+    { "path": "../../../dsh-remote-core/vendor/cordis" },
+    { "path": "../../../dsh-remote-core/packages/util/brand" },
+    { "path": "../../../dsh-remote-core/packages/typert/protocol" },
+    { "path": "../../../dsh-remote-core/packages/client/store" },
+    { "path": "../../../dsh-remote-core/packages/client/connection/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/api/gateway/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/api/session-controller/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-conversation/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-tool/tsconfig.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-workspace/tsconfig.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-sidebar/tsconfig.json" },
+    { "path": "../../../dsh-remote-core/packages/client/resources/tsconfig.json" },
+    { "path": "../../../dsh-remote-core/packages/test-support/client-runtime/tsconfig.json" }
+  ]
+}

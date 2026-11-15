@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "context": {
+    "workerVersion": "0.1.7", "sdk": "actual canonical Loader composition",
+    "transport": "HTTP/JWE polling", "network": "127.0.0.1 loopback; no TLS",
+    "relayPollMs": 20, "chunkBytes": 16384, "concurrency": 1, "samplesPerSize": 1,
+    "node": "v24.21.0", "platform": "win32 x64", "osRelease": "10.0.26200",
+    "limits": ["one sample per size, not a percentile", "not physical Worker or WAN evidence", "Content-Length counts omit headers/TLS", "process memory includes test runner and every role", "disk is non-atomic logical file size, excluding native blobs"]
+  },
+  "durationsMs": { "startup": 953.148, "projectRegistration": 602.483, "createAndBind": 817.302, "close": 62.195, "total": 45391.507 },
+  "samples": [
+    { "bytes": 16384, "uploadChunks": 1, "downloadChunks": 1, "downloadFrames": 2,
+      "uploadMs": 1465.317, "promptAndNativeIdleMs": 751.123, "downloadMs": 1083.717, "verifiedNativeEofAndExactBytes": true },
+    { "bytes": 131072, "uploadChunks": 8, "downloadChunks": 8, "downloadFrames": 9,
+      "uploadMs": 4052.445, "promptAndNativeIdleMs": 766.230, "downloadMs": 3664.694, "verifiedNativeEofAndExactBytes": true },
+    { "bytes": 524288, "uploadChunks": 32, "downloadChunks": 32, "downloadFrames": 33,
+      "uploadMs": 13023.565, "promptAndNativeIdleMs": 842.282, "downloadMs": 17254.820, "verifiedNativeEofAndExactBytes": true,
+      "httpRequests": { "upload": { "send": 70, "poll": 142, "ack": 69, "livePoll": 46 }, "download": { "send": 68, "poll": 176, "ack": 69, "livePoll": 61 } } }
+  ],
+  "httpRequestsTotal": { "send": 228, "poll": 475, "ack": 225, "liveInfo": 1, "livePoll": 156 },
+  "httpContentLengthBytesTotal": { "request": 2616572, "response": 2674029 },
+  "privateLogicalDiskGrowthBytes": { "workerPair": 1323912, "controllerPair": 1337601, "relay": 119232 },
+  "processSampledMemoryBytes": { "baselineRss": 84111360, "peakRss": 334446592, "baselineHeapUsed": 22361608, "peakHeapUsed": 189099160, "peakExternal": 18922090, "peakArrayBuffers": 14518904 }
+}

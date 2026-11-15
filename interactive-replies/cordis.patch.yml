@@ -1,0 +1,4 @@
+- insert:
+    - id: interactive-replies
+      name: '@local/interactive-replies'
+      config: {}

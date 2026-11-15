@@ -1,0 +1,34 @@
+{
+  "refreshedAt": "2026-11-12T03:12:49.284Z",
+  "scope": "foreign-only durable ACK pending-echo retirement",
+  "otherBundleBytesUnchanged": true,
+  "unchangedFilesChecked": 3467,
+  "buildReportPreserved": true,
+  "moduleAuditPreserved": true,
+  "changes": [
+    {
+      "file": "packages/session-controller/lib/client.js",
+      "before": "ce50dd63a643fb1c77e527c601f7c2ad8fd4fb73b1f63b83718de8e54b7abce9",
+      "after": "a6105c0781c2eaf0db65ec626658c586144449d76bdf4e3d3ade47cc85e4a2cb",
+      "changed": true
+    },
+    {
+      "file": "packages/session-controller/lib/client.js.map",
+      "before": "b898750564d2bdef0b6b9d7e934476de38d7d8cde5348bcbe8e32306f06691da",
+      "after": "b112e12ae2d590d7e4366acde729a818d821c5a28979eedc3da18c9fde9af7f4",
+      "changed": true
+    },
+    {
+      "file": "packages/worker-session-controller/lib/client.js",
+      "before": "6b7241c4267a9266f4e3ff5f920911044b3d20d9234c0b33f0ff9d5ba114ddb5",
+      "after": "eae94c3db6a928736fae3afd324336e6169ea531674adb9ee94dc459ca55d0df",
+      "changed": true
+    },
+    {
+      "file": "packages/worker-session-controller/lib/client.js.map",
+      "before": "b898750564d2bdef0b6b9d7e934476de38d7d8cde5348bcbe8e32306f06691da",
+      "after": "b112e12ae2d590d7e4366acde729a818d821c5a28979eedc3da18c9fde9af7f4",
+      "changed": true
+    }
+  ]
+}

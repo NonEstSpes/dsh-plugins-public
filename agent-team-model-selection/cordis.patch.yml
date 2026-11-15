@@ -1,0 +1,19 @@
+# Keep the stock Team UI, settings, other plugins and all existing row config.
+# A patch's `name` is a guard, not a replacement; use two scoped replacement rows.
+- id: agent-team
+  disabled: true
+- id: tool-agent-team
+  disabled: true
+- insert:
+    - id: agent-team-model-selection
+      name: '@local/dsh-agent-team-model-selection'
+      config:
+        maxMembers: 8
+        maxTasks: 256
+        maxMessageBytes: 65536
+        disposalTimeoutMs: 5000
+    - id: tool-agent-team-model-selection
+      name: '@local/dsh-agent-team-model-selection/tools'
+      config:
+        freshProvider: spawn
+        forkProvider: fork

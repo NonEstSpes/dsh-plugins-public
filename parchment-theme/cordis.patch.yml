@@ -1,0 +1,3 @@
+- insert:
+    - id: parchment-theme
+      name: '@local/parchment-theme'

@@ -1,0 +1,35 @@
+{
+  // Only the owned Client JavaScript proof is checked here; its Host importer sees a data-only .d.mts.
+  "extends": "../../../dsh-remote-core/tsconfig.base.client.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "rewriteRelativeImportExtensions": false,
+    "rootDir": "../../..",
+    "tsBuildInfoFile": "./.typecheck/native-acceptance.client.tsbuildinfo",
+    "types": ["node", "client-build-environment", "client-assets"],
+    "typeRoots": [
+      "../../../dsh-remote-core/scripts/types",
+      "../../../dsh-remote-core/node_modules/@types",
+      "../../../dsh-remote-core/node_modules"
+    ]
+  },
+  "files": [
+    "./fixtures/native-details/client-proof.mjs",
+    "./fixtures/native-live/client-proof.mjs",
+    "../../../dsh-remote-core/packages/api/session-source-controller/lib/typert.remote-client.d.ts"
+  ],
+  "references": [
+    { "path": "../../../dsh-remote-core/vendor/cordis" },
+    { "path": "../../../dsh-remote-core/packages/util/brand" },
+    { "path": "../../../dsh-remote-core/packages/typert/protocol" },
+    { "path": "../../../dsh-remote-core/packages/client/store" },
+    { "path": "../../../dsh-remote-core/packages/client/connection/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/api/gateway/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/api/session-controller/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/api/session-source-controller/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-conversation/tsconfig.client.json" },
+    { "path": "../../../dsh-remote-core/packages/client/ui-chat/tsconfig.client.json" }
+  ]
+}

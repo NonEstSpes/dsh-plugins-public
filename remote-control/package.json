@@ -1,0 +1,37 @@
+{
+  "name": "@local/dsh-remote-control",
+  "version": "0.1.5",
+  "private": true,
+  "description": "Paired native DSH sessions over an encrypted outbound relay",
+  "type": "module",
+  "engines": { "node": ">=22", "dsh": "0.2.2-rc.1" },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": ["index.js", "client.js", "lib", "relay", "scripts", "tests", "locale", "icon.svg", "cordis.patch.yml", "README.md", "PROTOCOL.md", "COMPATIBILITY.md", "WORKER-SETUP.md"],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation"] }
+  },
+  "dependencies": { "@deepseek-ai/schemastery": "3.18.5", "jose": "6.2.15", "zod": "4.4.3", "ws": "8.21.3" },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-llm": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-session": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.2-rc.1",
+    "@dsh-remote/worker-session-controller": "0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": { "optional": true },
+    "@deepseek-ai/dsh-llm": { "optional": true },
+    "@deepseek-ai/dsh-session": { "optional": true },
+    "@deepseek-ai/dsh-sandbox-policy": { "optional": true },
+    "@deepseek-ai/dsh-typert-protocol": { "optional": true },
+    "@dsh-remote/worker-session-controller": { "optional": true }
+  },
+  "scripts": { "test": "node tests/run.mjs", "relay": "node relay/cli.mjs", "pair": "node scripts/pair.mjs" }
+}

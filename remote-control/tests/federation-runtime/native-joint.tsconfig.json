@@ -1,0 +1,5 @@
+{
+  "extends": "../../../dsh-remote-core/tsconfig.base.json",
+  "compilerOptions": { "typeRoots": ["../../../dsh-remote-core/node_modules/@types"] },
+  "include": ["native-joint.host.spec.ts", "native-worker-owner.host.spec.ts", "native-catalog-composition.host.spec.ts"]
+}

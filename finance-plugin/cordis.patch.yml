@@ -1,0 +1,8 @@
+- insert:
+    - id: finance
+      name: '@local/dsh-finance'
+      config:
+        maxUploadMiB: 10
+        previewTtlMinutes: 15
+        reportHour: 21
+        backupRetention: 7

@@ -1,0 +1,12 @@
+{
+  "name": "@local/dsh-agent-team-model-selection",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Narrow Agent Teams extension: per-teammate model and reasoning effort, using existing session authorization",
+  "type": "module",
+  "engines": { "node": ">=22", "dsh": "0.2.2-rc.1" },
+  "exports": { ".": "./team.js", "./tools": "./tools.js" },
+  "files": ["team.js", "tools.js", "model-selection.js", "cordis.patch.yml", "README.md", "LICENSE"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } },
+  "scripts": { "test": "node scripts/test.mjs" }
+}

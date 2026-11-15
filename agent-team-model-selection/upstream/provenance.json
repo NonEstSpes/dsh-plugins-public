@@ -1,0 +1,12 @@
+{
+  "team.js": {
+    "package": "@deepseek-ai/dsh-experimental-agent-team",
+    "version": "0.2.2-rc.1",
+    "sha256": "d5ed602b92410d40b1350185fd48cf1cefb9f606fb0a69351a10e12204afc3a2"
+  },
+  "tools.js": {
+    "package": "@deepseek-ai/dsh-experimental-tool-agent-team",
+    "version": "0.2.2-rc.1",
+    "sha256": "cac22fe5f83a179056469cf329def58393c7620eae23b018c66f42c37d849f63"
+  }
+}

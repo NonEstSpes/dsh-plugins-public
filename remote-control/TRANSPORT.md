@@ -1,0 +1,13 @@
+# Relay transport
+
+Omitted `relayTransport` or `"https"` retains the existing HTTPS carrier and opens no socket. A version-two pair selecting `"auto"` must explicitly provide positive `requestTimeoutMs` and `relaySocketConnectTimeoutMs`, with the connection deadline no greater than the request deadline. A connection timeout is invalid in HTTPS-only mode.
+
+The private [Node carrier](lib/relay-socket.mjs) uses same-origin `v1/socket`: WSS for HTTPS, or WS only for an explicitly allowed exact loopback HTTP authority. The existing bearer header authenticates before upgrade; the subprotocol is `dsh-relay-rpc-v1`. Redirects, URL credentials/query tokens and TLS-verification bypass are forbidden. Old-relay 404/426 support refusal is cached for the carrier lifetime; 401/403 never falls back. Temporary pre-open failures use the explicit connection deadline as their retry delay.
+
+`request(route, data, signal, beforePublish?)` returns `undefined` only before possible publication, permitting the caller's existing HTTPS path and validation. After submission, disconnect, cancellation and timeout reject without transport-level HTTP replay. Durable retries retain the existing encrypted packet id; live delivery retains its loss/rebaseline rules. The optional late publication check runs after connection and serialization, immediately before submission; its original failure propagates unchanged.
+
+[Relay dispatch](relay/server.mjs) shares existing send/poll/ack/live handlers through a [transport-neutral reply](relay/reply.mjs), not another mailbox, file protocol or journal. Closed JSON RPC frames are bounded to 100 KiB, compression is disabled, requests/handlers are bounded to 16 per connection, and authenticated devices have at most two connections. Cancellation and closure release reply-owned long polls; shutdown joins owned handlers and ordinary relay queues. Cancellation makes no effect-rollback claim.
+
+Safe diagnostics expose only mode, connection/support/backoff/closed state, pending count, request/frame counts and total encoded JSON-frame bytes. They contain no ids, URLs, payloads, headers, tokens or private errors. Byte counts exclude upgrade headers, WebSocket framing and TLS overhead, so they are not physical-link measurements.
+
+The [three focused tests](tests/relay-socket.test.mjs) cover actual authenticated relay roundtrips, bounds, refusal, pre-publication fallback eligibility, post-send disconnect rejection, exact late-check failure and poll cancellation/replacement. They use loopback WS/HTTP, not a physical TLS deployment. The integrating Lead owns Native integration and comparable before/after throughput measurements.

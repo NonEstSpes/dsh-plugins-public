@@ -1,0 +1,24 @@
+{
+  "name": "@local/interactive-replies",
+  "version": "1.0.3",
+  "private": true,
+  "description": "Persistent interactive Vue/JavaScript replies with forms, tables, charts, drafts and validated submissions",
+  "type": "module",
+  "exports": {
+    ".": "./dist/1.0.3/host.js",
+    "./client": "./dist/1.0.3/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": ["dist/1.0.3/**", "client.js", "cordis.patch.yml", "locale/*.json", "icon.svg", "README.md", "THIRD_PARTY_NOTICES.md"],
+  "scripts": {"build": "node build.mjs", "test": "node --test --test-isolation=none state.test.js submission.test.js runtime.test.js host.test.js drafts.test.js components.test.js admission.test.js runtime-ssr.test.js"},
+  "devDependencies": {"vue": "3.5.22"},
+  "dsh": {
+    "bundle": {"patch": "./cordis.patch.yml"},
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": ["@deepseek-ai/dsh-client-ui-chat", "@deepseek-ai/dsh-api-session-controller", "@deepseek-ai/dsh-client-locale"]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "context": { "workerVersion": "0.1.7", "sdk": "actual canonical Loader composition", "transport": "auto; connected WS in all observed carriers", "endpointStateVersion": 2, "network": "127.0.0.1 loopback; no TLS", "relayPollMs": 20, "chunkBytes": 16384, "concurrency": 1, "samplesPerSize": 1, "node": "v24.21.0", "platform": "win32 x64", "osRelease": "10.0.26200" },
+  "durationsMs": { "startup": 3183.875, "projectRegistration": 1645.332, "createAndBind": 1176.807, "close": 174.376, "total": 47713.805 },
+  "samples": [
+    { "bytes": 16384, "uploadChunks": 1, "downloadChunks": 1, "downloadFrames": 2, "uploadMs": 1390.799, "promptAndNativeIdleMs": 1027.436, "downloadMs": 1292.146, "verifiedNativeEofAndExactBytes": true },
+    { "bytes": 131072, "uploadChunks": 8, "downloadChunks": 8, "downloadFrames": 9, "uploadMs": 4039.753, "promptAndNativeIdleMs": 1047.956, "downloadMs": 3894.686, "verifiedNativeEofAndExactBytes": true },
+    { "bytes": 524288, "uploadChunks": 32, "downloadChunks": 32, "downloadFrames": 33, "uploadMs": 12869.489, "promptAndNativeIdleMs": 771.106, "downloadMs": 15107.313, "verifiedNativeEofAndExactBytes": true }
+  ],
+  "httpRequestsTotal": {},
+  "transportBeforeClose": {
+    "workerControl": { "mode": "auto", "connected": true, "supported": true, "requestsSent": 463, "framesSent": 463, "framesReceived": 463, "bytesSent": 1328727, "bytesReceived": 1372505 },
+    "controllerControl": { "mode": "auto", "connected": true, "supported": true, "requestsSent": 458, "framesSent": 458, "framesReceived": 458, "bytesSent": 1349908, "bytesReceived": 1397592 },
+    "workerLive": { "mode": "auto", "connected": true, "supported": true, "requestsSent": 156, "framesSent": 156, "framesReceived": 156, "bytesSent": 11700, "bytesReceived": 17773 }
+  },
+  "privateLogicalDiskGrowthBytes": { "workerPair": 59353, "controllerPair": 53119, "relay": 52015 },
+  "processSampledMemoryBytes": { "baselineRss": 84803584, "peakRss": 231182336, "baselineHeapUsed": 23451904, "peakHeapUsed": 104759968, "peakExternal": 9228760, "peakArrayBuffers": 4840491 },
+  "limits": ["single comparable sample per size, not a percentile or causal speed guarantee", "not physical Worker, WAN or TLS evidence", "HTTP counters exclude WebSocket upgrade and WebSocket frames", "WebSocket byte counts are encoded JSON frames, not TCP/TLS", "memory includes runner and every local role; no forced GC", "private disk snapshots are non-atomic logical file sizes, excluding native blobs", "no throughput budget established; native upload/download remains serial and durability-limited"]
+}

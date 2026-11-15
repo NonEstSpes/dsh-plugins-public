@@ -1,0 +1,14 @@
+{
+  "name": "@local/dsh-finance",
+  "version": "0.1.14",
+  "private": true,
+  "description": "Локальный финансовый кабинет: расходы, доходы, бюджеты, цели накоплений и ручной импорт выписок.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=22.13.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
+  "exports": { ".": "./index.js", "./client": "./client.js", "./locale/*.json": "./locale/*.json", "./icon": "./icon.svg" },
+  "files": ["index.js", "client.js", "ui.css", "scripts/build-style.mjs", "lib", "cordis.patch.yml", "locale", "icon.svg", "README.md", "API.md"],
+  "scripts": { "test": "node --test --test-isolation=none test/*.test.js", "build:style": "node scripts/build-style.mjs", "check": "node scripts/build-style.mjs --check && node --check index.js && node --check client.js" },
+  "dependencies": { "@deepseek-ai/schemastery": "3.18.5", "pdfjs-dist": "5.4.624" },
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" }, "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-locale"] } }
+}

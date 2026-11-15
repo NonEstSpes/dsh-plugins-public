@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Remote Control",
+    "description": "Manage paired native DSH sessions over an encrypted outbound relay. First-stage preview: tasks and reports, without remote approvals or publishing."
+  }
+}

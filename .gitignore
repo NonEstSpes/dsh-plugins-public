@@ -1,0 +1,55 @@
+# Secrets and machine-local configuration
+**/.private/
+**/.env
+**/.env.*
+**/*.settings.json
+**/controller.json
+**/worker.json
+**/*-state/
+**/profiles/
+**/*.db
+**/*.sqlite*
+**/*.log
+
+# Dependencies and caches
+**/node_modules/
+**/.pnpm-store/
+**/.pnpm-cache/
+**/.pnpm-state/
+**/.cache/
+**/__pycache__/
+
+# Native build products and release archives
+.build/
+**/*.zip
+**/*.tgz
+remote-control/.build/
+remote-control/.local-test/
+remote-control/dist/
+remote-control/plugin-native/bundle*/
+remote-control/plugin-native/dist/
+remote-control/plugin-native/package/
+remote-control/plugin-native/worker-*/
+remote-control/plugin-native/controller-*/
+remote-control/plugin-bridge/bundle*/
+remote-control/portable/worker-release-*/
+remote-control/portable/.worker-stage-*/
+agent-team-model-selection/dist/
+agent-team-model-selection/verification/
+studio-theme/dist/
+
+# Internal operational reports are never publication sources
+**/HANDOFF.md
+**/SESSION-START.md
+**/IMPLEMENTATION-PROGRESS.md
+**/*HANDOFF-*.md
+**/INCIDENT-*.md
+**/DEPLOYMENT-*.md
+**/CONTROLLER-UPDATE-RETRY-*.md
+finance-plugin/test/*.txt
+finance-plugin/test/*.tap
+
+# Editor/OS files
+.DS_Store
+Thumbs.db
+*.swp

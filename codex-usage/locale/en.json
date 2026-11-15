@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Codex Usage Ring",
+    "description": "Shows Codex subscription usage and renewal times in the sidebar. Lists available reset cards with expiry dates and applies a selected reset only after confirmation through the existing Codex plugin."
+  }
+}
